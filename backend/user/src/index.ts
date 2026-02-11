@@ -16,7 +16,7 @@ redisClient.connect().then(() => console.log("connnected to redis"))
 
 import userRoute from "./routes/userRouter.js"
 
-app.use("api/v1/user",userRoute)
+app.use("/api/v1/user",userRoute)
 
 app.listen(port, () => {
     console.log(`server running on : http://localhost:${port}`)
