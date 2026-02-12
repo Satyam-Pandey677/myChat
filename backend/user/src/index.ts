@@ -1,12 +1,14 @@
-import express from "express"
+import express from "express";
 import { dbConnect } from "./config/DB.js";
-import {createClient} from "redis"
+import {createClient} from "redis";
+import cors from "cors";
 
 const app = express();
 const port = process.env.PORT || 8000;
 
 
 app.use(express.json())
+app.use(cors());
 
 connectRabbitMQ();
 dbConnect();

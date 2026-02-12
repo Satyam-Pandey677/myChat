@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import dotenv from "dotenv"
 
-dotenv.config()
+
 
 export const dbConnect = async() => {
 
+    console.log(process.env.DB_URL)
 
     try {
         const connect =await mongoose.connect(`${process.env.DB_URL}`,{
@@ -15,6 +15,6 @@ export const dbConnect = async() => {
             console.log("db connected successfully")
         }
     } catch (error) {
-        
+        console.log("Something went off ", error)
     }
 }
