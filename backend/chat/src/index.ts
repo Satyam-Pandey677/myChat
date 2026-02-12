@@ -6,6 +6,9 @@ const port = process.env.PORT || 8000;
 
 dbConnect();
 
+import chatRouter from "./routers/chatRouter.js";
+app.use("/api/v1/", chatRouter);
+
 app.listen(port, () => {
     console.log(`Chat Server running on  port: ${port}`);
 })

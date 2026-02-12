@@ -1,5 +1,5 @@
 import type { AuthenticatedRequest } from "../middleware/isAuth.js";
-import { CHAT } from "../modals/chatRouter.js";
+import { CHAT } from "../modals/chatModals.js";
 import TryCatch from "../utils/TryCatch.js";
 
 export const createNewChat = TryCatch(async(req: AuthenticatedRequest, res) => {
@@ -23,6 +23,17 @@ export const createNewChat = TryCatch(async(req: AuthenticatedRequest, res) => {
         res.json({
             message:"Chat already existed",
             chatId : existingChat._id,
-        })
+        });
+        return;
     }
+
+    const newChat = await CHAT.create({
+        users:[userId, otherUserId],
+    })
+
+    res.status(201)
+    .json({
+        message:"New Chat Created",
+        chatId:newChat._id
+    })
 })
