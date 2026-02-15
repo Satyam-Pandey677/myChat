@@ -16,7 +16,7 @@ export const createNewChat = TryCatch(async(req: AuthenticatedRequest, res) => {
     }
 
     const existingChat = await CHAT.findOne({
-        user:{$all:[userId],otherUserId, $size:2},
+        user:{$all:[userId,otherUserId] , $size:2},
     })
 
     if(existingChat){
