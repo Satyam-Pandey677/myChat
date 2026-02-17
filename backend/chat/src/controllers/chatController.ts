@@ -1,5 +1,7 @@
+import axios from "axios";
 import type { AuthenticatedRequest } from "../middleware/isAuth.js";
 import { CHAT } from "../modals/chatModals.js";
+import { MSG } from "../modals/messageModal.js";
 import TryCatch from "../utils/TryCatch.js";
 
 export const createNewChat = TryCatch(async(req: AuthenticatedRequest, res) => {
@@ -36,4 +38,79 @@ export const createNewChat = TryCatch(async(req: AuthenticatedRequest, res) => {
         message:"New Chat Created",
         chatId:newChat._id
     })
+})
+
+
+export const getAllChats = TryCatch(async(req:AuthenticatedRequest, res) => {
+    const userId = req.user?._id;   
+
+    if(!userId){
+        res.status(400).json({
+            message:"UserID missing"
+        })
+        return;
+    }
+
+
+    const chats = await CHAT.find({users: userId}).sort({updatedAt: -1});
+
+    const chatWithUserData = await Promise.all(
+        chats.map(async(chat) => {
+            const otherUserId = chat.users.find((id) => id != userId);
+
+            const unSeenCount = await MSG.countDocuments({
+                chatId:chat._id,
+                sender:{$ne: userId},
+                seen:false,
+            })
+
+            try {
+                const authHeaders = req.headers.authorization;
+                const {data} = await axios.get(
+                    `${process.env.USER_SERVICE}/api/v1/user/${otherUserId}`,
+                    {
+                        ...(authHeaders && {
+                            headers:{
+                                Authorization:authHeaders
+                            }
+                        })
+                    }
+                );
+
+                return {
+                    user:data,
+                    chat:{
+                        ...chat.toObject(),
+                        latestMessage: chat.latestMessage || null,
+                        unSeenCount,
+                    }
+                };
+
+            } catch (error) {
+                console.log(error);
+                return{
+                     user: {_id:otherUserId, name:"Unknown User"},
+                     chat:{
+                        ...chat.toObject(),
+                        latestMessage: chat.latestMessage || null,
+                        unSeenCount,
+
+                    }
+                };
+            }
+        })
+    )
+
+    res.json({
+        chats: chatWithUserData,
+    })
+}) 
+
+
+
+export const sendmessage  =  TryCatch(async(req:AuthenticatedRequest,res) => {
+    const senderId = req.user?._id;
+
+    const {chatId, text} = req.body;
+    
 })

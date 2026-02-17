@@ -9,7 +9,7 @@ app.use(express.json())
 dbConnect();
 
 import chatRouter from "./routers/chatRouter.js";
-app.use("/api/v1/", chatRouter);
+app.use("/api/v1", chatRouter);
 
 app.listen(port, () => {
     console.log(`Chat Server running on  port: ${port}`);
