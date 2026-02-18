@@ -208,3 +208,99 @@ export const sendmessage  =  TryCatch(async(req:AuthenticatedRequest,res) => {
     })
 })
 
+export const getMessagesByChat = TryCatch(async(req:AuthenticatedRequest, res) => {
+    const userId = req.body;
+    const {chatId} = req.body;
+
+    if(!chatId){
+        res.status(400).json({
+            message:"chat id required",
+        });
+        return;
+    }
+     if(!userId){
+        res.status(401).json({
+            message:"Unauthorized",
+        });
+        return;
+    }
+
+    const chat  =  await CHAT.findById(chatId);
+
+    if(!chat){
+        res.status(404).json({
+            message:"Chat not found"
+        });
+    }
+
+    const userInChat = chat?.users.some(
+        (userId) =>userId.toString() === userId.toString()
+    );
+
+    if(!userInChat){
+        res.status(403).json({
+            message:"You not a participant of this chat"
+        })
+        return;
+    }
+
+    const meesagesToMarkSeen = await MSG.find({
+        chatId:chatId,
+        sender:{$ne: userId},
+        seen:false,
+    })
+
+    await MSG.updateMany({
+        chatId:chatId,
+        sender:{$ne: userId},
+        seen:false,  
+    },{
+        seen:true,
+        seenAt:new Date()
+    });
+
+    const messages = await MSG.find({chatId}).sort({createdAt:1});
+
+    const otherUserId = chat?.users.find((id) => id != userId);
+
+    try {
+         const authHeaders = req.headers.authorization;
+                const {data} = await axios.get(
+                    `${process.env.USER_SERVICE}/api/v1/user/${otherUserId}`,
+                    {
+                        ...(authHeaders && {
+                            headers:{
+                                Authorization:authHeaders
+                            }
+                        })
+                    }
+                );
+
+            if(!otherUserId){
+                res.status(400).json({
+                    messages:"No other user",
+                })
+                return ;
+            }
+
+            //socket work
+
+
+            res.json({
+                messages,
+                user:data
+            })
+    } catch (error) {
+        console.log(error)
+        
+        res.json({
+            messages,
+            user:{
+                _id:otherUserId,
+                name:"unknown User"
+            }
+        })
+    }
+
+})
+
