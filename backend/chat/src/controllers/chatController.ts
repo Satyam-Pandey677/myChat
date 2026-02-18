@@ -209,8 +209,8 @@ export const sendmessage  =  TryCatch(async(req:AuthenticatedRequest,res) => {
 })
 
 export const getMessagesByChat = TryCatch(async(req:AuthenticatedRequest, res) => {
-    const userId = req.body;
-    const {chatId} = req.body;
+    const userId = req.user?._id  ;
+    const {chatId} = req.params ;
 
     if(!chatId){
         res.status(400).json({
