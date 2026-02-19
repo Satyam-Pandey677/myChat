@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-
-
+import { AppContextProvider } from "@/context/AppContext";
 
 export const metadata: Metadata = {
   title: "Chat App",
@@ -16,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}
+        <AppContextProvider>{children}</AppContextProvider>
       </body>
     </html>
   );

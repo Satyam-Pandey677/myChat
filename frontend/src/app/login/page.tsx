@@ -1,12 +1,17 @@
 "use client";
+import Loading from "@/components/Loading";
+import { useAppData, USER_SERVICE } from "@/context/AppContext";
 import axios from "axios";
 import { ArrowRight, Loader2, Mail } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 const LoginPage = () => {
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+
+  const {isAuth, loading:userLoading} = useAppData();
 
   const router = useRouter();
 
@@ -16,18 +21,23 @@ const LoginPage = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await axios.post(`http://localhost:5000/api/v1/login`, {
+      const { data } = await axios.post(`${USER_SERVICE}/api/v1/login`, {
         email,
       });
 
-      alert(data.message);
+      toast.success(data.message);
       router.push(`/verify?email=${email}`);
     } catch (error: any) {
-      alert(error.response.data.message);
+      toast.error(error.response.data.message);
     } finally {
       setLoading(false);
     }
   };
+
+
+  if(userLoading) return <Loading/>;
+
+  if(isAuth) return redirect("/chat")
 
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
