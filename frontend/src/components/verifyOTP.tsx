@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 
 const VerifyOTP = () => {
 
-  const {isAuth, setUser, setIsAuth, loading:userLoading } = useAppData();
+  const {isAuth, setUser, setIsAuth, loading:userLoading, fetchChats, fetchUsers } = useAppData();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [otp, setOTP] = useState<string[]>(["", "", "", "", "", ""]);
@@ -97,13 +97,15 @@ const VerifyOTP = () => {
 
       setOTP(["","","","","",""]);
       inputRef.current[0]?.focus();
-      setUser(data.user)
-      setIsAuth(true)
+      setUser(data.user);
+      setIsAuth(true);
+      fetchChats();
+      fetchUsers();
     
     } catch (error:any) {
       setError(error.response.data.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
