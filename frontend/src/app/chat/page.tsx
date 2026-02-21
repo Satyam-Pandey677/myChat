@@ -1,9 +1,12 @@
 "use client"
 import ChatSidebar from '@/components/ChatSidebar';
 import Loading from '@/components/Loading';
-import { useAppData, User } from '@/context/AppContext'
+import { CHAT_SERVICE, useAppData, User } from '@/context/AppContext'
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
+import Cookies from 'js-cookie';
+import toast from 'react-hot-toast';
+import axios from 'axios';
 
 
 export interface Message {
@@ -42,10 +45,25 @@ const ChatApp = () => {
     }
   },[isAuth, router, loading]);
 
-  const handleLogout = () => {
+  const handleLogout = () => logoutUser();
 
+  const createChat = async(u:User) => {
+    try {
+      const token = Cookies.get("token");
+      const {data} = await axios.post(`${CHAT_SERVICE}/api/v1/chat/new`, {userId: loggedInUser?._id,otherUserId:u._id   
+      },{
+        headers:{
+          Authorization: `Bearer ${token}`
+        }
+      })
+      setSelectedUser(data.chatId);
+      setShowAllUsers(false);
+      await fetchChats();
+    } catch (error) {
+        toast.error("Failed to start chat")
+    }
   }
-
+ 
 
   if(loading) return <Loading/>
   return (
@@ -61,8 +79,12 @@ const ChatApp = () => {
         selectedUser ={selectedUser}
         handleLogout = {handleLogout}
         setSelectedUser = {setSelectedUser}
-
+        createChat = {createChat}
       />
+
+      <div className='flex-1 flex flex-col justify-between p-4 backdrop-blur-xl bg-white/5 border border-white/10   '>
+
+      </div>
     </div>
   )
 }

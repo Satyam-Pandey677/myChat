@@ -2,12 +2,14 @@ import { User } from "@/context/AppContext";
 import {
   CornerDownRight,
   CornerUpLeft,
+  LogOut,
   MessageCircle,
   Plus,
   Search,
   UserCircle,
   X,
 } from "lucide-react";
+import Link from "next/link";
 import React, { useState } from "react";
 
 interface ChatSidebarProps {
@@ -21,6 +23,7 @@ interface ChatSidebarProps {
   setSelectedUser: (userId: string | null) => void;
   selectedUser: string | null;
   handleLogout: () => void;
+  createChat:(user:User) => void;
 }
 
 const ChatSidebar = ({
@@ -34,6 +37,7 @@ const ChatSidebar = ({
   selectedUser,
   handleLogout,
   setSelectedUser,
+  createChat
 }: ChatSidebarProps) => {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -106,6 +110,7 @@ const ChatSidebar = ({
                   <button
                     key={u._id}
                     className="w-full text-left p-4 rounded-lg border border-gray-700 hover:border-gray-600 hover:bg-gray-800 transition-colors "
+                    onClick={() => createChat(u)}
                   >
                     <div className="flex items-center gap-3 w-full">
                       <div className=" relative">
@@ -190,8 +195,33 @@ const ChatSidebar = ({
             })}
           </div>
         ) : (
-          <div></div>
+          <div className="flex flex-col items-center justify-center h-full">
+            <div className="p-4 bg-gray-800 rounded-full mb-4 ">
+              <MessageCircle className="w-8 h-8 text-gray-400"/>
+            </div>
+            <p className="text-gray-400 font-medium  ">No Conversation Yet</p>
+            <p className="text-sm text-gray-500 mt-1">
+              Start a new chat to begin messaging
+            </p>
+          </div>
         )}
+      </div>
+
+      {/* footer */}
+      <div className="p-4 border-t border-gray-700 space-y-2">
+        <Link href={'/profile '} className="flex items-center gap-3 px-4  py-3 rounded-lg hover:bg-gray-800 transition-colors">
+          <div className="p-1.5 bg-gray-700 rounded-lg ">
+            <UserCircle className="w-4 h-4 text-gray-300 "/>
+          </div>
+          <span className="font-medium text-gray-300">Profile</span>
+        </Link>
+
+        <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-600 transition-colors text-red-500 hover:text-white">
+          <div className="p-1.5 bg-red-600 rounded-lg ">
+            <LogOut className="w-4 h-4 text-gray-300 "/>
+          </div>
+          <span className="font-medium ">Logout</span>
+        </button>
       </div>
     </aside>
   );
