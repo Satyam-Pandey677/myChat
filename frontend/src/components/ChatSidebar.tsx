@@ -1,5 +1,13 @@
 import { User } from "@/context/AppContext";
-import { MessageCircle, Plus, Search, UserCircle, X } from "lucide-react";
+import {
+  CornerDownRight,
+  CornerUpLeft,
+  MessageCircle,
+  Plus,
+  Search,
+  UserCircle,
+  X,
+} from "lucide-react";
 import React, { useState } from "react";
 
 interface ChatSidebarProps {
@@ -99,7 +107,7 @@ const ChatSidebar = ({
                     key={u._id}
                     className="w-full text-left p-4 rounded-lg border border-gray-700 hover:border-gray-600 hover:bg-gray-800 transition-colors "
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 w-full">
                       <div className=" relative">
                         <UserCircle className="w-6 h-6 text-gray-300" />
                       </div>
@@ -118,7 +126,7 @@ const ChatSidebar = ({
         ) : chats && chats?.length > 0 ? (
           <div className="space-y-2 overflow-y-auto h-full pb-4 ">
             {chats.map((chat) => {
-              console.log(chat)
+              console.log(chat);
               const latestMessage = chat.chat.latestMessage;
               const isSelected = selectedUser === chat.chat._id;
               const isSendByMe = latestMessage?.sender === loggedInUser?._id;
@@ -143,20 +151,38 @@ const ChatSidebar = ({
                         <UserCircle className="w-7 h-7 text-gray-300" />
                         {/* online user work */}
                       </div>
-                      <div className="flex-1 min-w-0 ">
-                        <div className="flex items-center justify-center mb-1">
-                          <span
-                            className={`font-semibold truncate ${
-                              isSelected ? "text-white" : "text-gray-200"
-                            }`}
-                          >{chat.user.name}</span>
-                          {
-                            unseenCount >0 && <div className="bg-red-600 text-white text-xs font-bold rounded-full min-w-5.5 h-5.5 flex items-center justify-center px-2">
-                              {unseenCount > 99 ? "99+": unseenCount}
-                            </div>
-                          }
-                        </div>
+                    </div>
+                    <div className="flex-1 min-w-0 ">
+                      <div className="flex items-center mb-1">
+                        <span
+                          className={`font-semibold truncate ${
+                            isSelected ? "text-white" : "text-gray-200"
+                          }`}
+                        >
+                          {chat.user.name}
+                        </span>
+                        {unseenCount > 0 && (
+                          <div className="bg-red-600 text-white text-xs font-bold rounded-full min-w-5.5 h-5.5 flex items-center justify-center px-2">
+                            {unseenCount > 99 ? "99+" : unseenCount}
+                          </div>
+                        )}
                       </div>
+                      {latestMessage && (
+                        <div className="flex items-center gap-3">
+                          {isSendByMe ? (
+                            <CornerUpLeft
+                              size={14}
+                              className="text-blue-400 text-shrink-0"
+                            />
+                          ) : (
+                            <CornerDownRight
+                              size={14}
+                              className="text-green-400 text-shrink-0"
+                            />
+                          )}
+                          <span className="text-sm text-gray-400 truncate flex-1 ">{latestMessage.text}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </button>
