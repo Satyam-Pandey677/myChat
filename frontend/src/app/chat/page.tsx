@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react'
 import Cookies from 'js-cookie';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import ChatHeader from '@/components/ChatHeader';
 
 
 export interface Message {
@@ -47,6 +48,25 @@ const ChatApp = () => {
 
   const handleLogout = () => logoutUser();
 
+  const fetchChat = async() => {
+    const token = Cookies.get("token");
+    try {
+      const {data} = await axios.get(`${CHAT_SERVICE}/api/v1/message/${selectedUser}`,{
+        headers:{
+          Authorization:`Bearer ${token}`
+        }
+      });
+
+      setMessages(data.messages);
+      setUser(data.user);
+
+      await fetchChats();
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to load messages")
+    }
+  }
+
   const createChat = async(u:User) => {
     try {
       const token = Cookies.get("token");
@@ -63,6 +83,12 @@ const ChatApp = () => {
         toast.error("Failed to start chat")
     }
   }
+
+  useEffect(() => {
+    if(selectedUser){
+      fetchChat();
+    }
+  },[selectedUser]);
  
 
   if(loading) return <Loading/>
@@ -83,7 +109,7 @@ const ChatApp = () => {
       />
 
       <div className='flex-1 flex flex-col justify-between p-4 backdrop-blur-xl bg-white/5 border border-white/10   '>
-
+          <ChatHeader user={user} setSideBarOpen={setSidebarOpen} isTyping={isTyping}/> 
       </div>
     </div>
   )
