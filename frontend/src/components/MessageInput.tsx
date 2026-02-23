@@ -1,4 +1,4 @@
-import { Paperclip, X } from 'lucide-react';
+import { Loader, Paperclip, SendIcon, X } from 'lucide-react';
 import React, { useState } from 'react'
 
 interface MessageInputProps {
@@ -49,7 +49,11 @@ const MessageInput = ({selectedUser, message,setMessage,handleMessageSend}:Messa
             onChange={(e) => setMessage(e.target.value )}
             />
 
-            <button type='submit' disabled={(!imageFile && !message ) || isUploading} className="bg-blue-600 hover:bg-blue-700 " ></button>
+            <button type='submit' disabled={(!imageFile && !message ) || isUploading} className="bg-blue-600 hover:bg-blue-700 px-4 py-3 rounded-lg  transition-colors flex  items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed text-white" >
+                {
+                    isUploading? <Loader className='w-4 h-4 animate-spin'/>:<SendIcon className='w-4 h-4'/>
+                }
+            </button>
         </div>
 
 

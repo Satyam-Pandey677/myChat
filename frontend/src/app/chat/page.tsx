@@ -135,7 +135,7 @@ const ChatApp = () => {
           const displayText = imageFile ? "📷 image" : message
 
       } catch (error:any) {
-          toast.error(error.response.data.message)
+          toast.error(error)
       }
   }
 
