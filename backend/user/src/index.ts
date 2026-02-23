@@ -2,6 +2,8 @@ import express from "express";
 import { dbConnect } from "./config/DB.js";
 import {createClient} from "redis";
 import cors from "cors";
+import userRoute from "./routes/userRouter.js"
+import { connectRabbitMQ } from "./config/rabbitmq.js";
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -21,8 +23,7 @@ export const redisClient = createClient({
 
 redisClient.connect().then(() => console.log("connnected to redis"))
 
-import userRoute from "./routes/userRouter.js"
-import { connectRabbitMQ } from "./config/rabbitmq.js";
+
 
 app.use("/api/v1",userRoute)
 

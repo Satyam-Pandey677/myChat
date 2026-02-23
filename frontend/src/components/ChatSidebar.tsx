@@ -130,7 +130,7 @@ const ChatSidebar = ({
           </div>
         ) : chats && chats?.length > 0 ? (
           <div className="space-y-2 overflow-y-auto h-full pb-4 ">
-            {chats.map((chat) => {
+            {chats.map((chat,i) => {
               console.log(chat);
               const latestMessage = chat.chat.latestMessage;
               const isSelected = selectedUser === chat.chat._id;
@@ -139,7 +139,7 @@ const ChatSidebar = ({
 
               return (
                 <button
-                  key={chat._id}
+                  key={i}
                   onClick={() => {
                     setSelectedUser(chat.chat._id);
                     setSidebarOpen(false);
