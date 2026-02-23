@@ -10,6 +10,7 @@ import axios from 'axios';
 import ChatHeader from '@/components/ChatHeader';
 import ChatMessages from '@/components/ChatMessages';
 import MessageInput from '@/components/MessageInput';
+import { SocketData } from '@/context/SocketContext';
 
 
 export interface Message {
@@ -29,6 +30,10 @@ export interface Message {
 
 const ChatApp = () => {
   const {loading, isAuth, logoutUser,chats, user:loggedInUser, users, fetchChats, setChats } = useAppData();
+
+  const {onlineUsers} = SocketData();
+
+  console.log(onlineUsers)
 
   const [selectedUser, setSelectedUser] = useState<string |null>(null);
   const [message, setMessage] = useState("");
