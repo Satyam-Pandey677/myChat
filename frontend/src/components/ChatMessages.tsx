@@ -37,7 +37,7 @@ const ChatMessages = ({
   }, [selectedUser, uniqueMessages]);
   return (
     <div className="flex-1 overflow-hidden">
-      <div className="h-full  max-h-[calc(100vh -215px )] overflow-y-auto p-2 space-y-2 custom-scroll">
+      <div className="h-full  max-h-[calc(100vh-215px)] overflow-y-auto p-2 space-y-2 custom-scroll">
         {!selectedUser ? (
           <p className="text-gray-400 text-center mt-20 ">
             Please select user to start chatting 💬{" "}
