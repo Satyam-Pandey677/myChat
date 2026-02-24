@@ -28,10 +28,46 @@ io.on("connection", (socket:Socket) => {
 
     io.emit("getOnlineUser", Object.keys(userSocketMap));
 
+    if(userId){
+        socket.join(userId)
+    }
+
+    socket.on("typing", (data) => {
+        console.log(`User ${data.userId} is typing in chat ${data.chatId}`)
+        socket.to(data.chatId).emit("userTyping",{
+            chatId:data.chatId,
+            userId:data.userId
+        })
+    })
+
+    socket.on("stopTyping", (data) => {
+        console.log(`User ${data.userId} stopped typing in chat ${data.chatId}`)
+        socket.to(data.chaId).emit("userStoppedTyping",{
+            chatId:data.chatId,
+            userId:data.userId  
+        })
+    })
+
+    socket.on("jsoinChat",(chatId) =>{
+        socket.join(chatId)
+        console.log(`User ${userId} joined chat room ${chatId}`);
+    });
+
+    socket.on("leaveChat", (chatId) => {
+        socket.leave(chatId)
+        console.log(`User ${userId} left chat room ${chatId}`);
+
+    })
     
 
     socket.on("disconnect", () => {
         console.log("User Discoonected", socket.id);
+
+        if(userId){
+            delete userSocketMap[userId];
+            console.log(`User ${userId} remove from online users`);
+            io.emit("getOnlineUser", Object.keys(userSocketMap));
+        }
     });
 
     socket.on("connect_error", (error) => {

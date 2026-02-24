@@ -24,6 +24,7 @@ interface ChatSidebarProps {
   selectedUser: string | null;
   handleLogout: () => void;
   createChat:(user:User) => void;
+  onlineUsers:string[]
 }
 
 const ChatSidebar = ({
@@ -37,7 +38,8 @@ const ChatSidebar = ({
   selectedUser,
   handleLogout,
   setSelectedUser,
-  createChat
+  createChat,
+  onlineUsers
 }: ChatSidebarProps) => {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -99,6 +101,8 @@ const ChatSidebar = ({
             </div>
             {/* {users list} */}
 
+
+
             <div className="space-y-2 overflow-y-auto h-full pb-4 ">
               {users
                 ?.filter(
@@ -115,12 +119,22 @@ const ChatSidebar = ({
                     <div className="flex items-center gap-3 w-full">
                       <div className=" relative">
                         <UserCircle className="w-6 h-6 text-gray-300" />
+                      {
+                        
+                        onlineUsers.includes(u._id) && (
+                          <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-green-500 border-2 border-gray-900"/>
+                        )
+                      }
                       </div>
                       {/* Online symbole dikhanan hai */}
+                      
+
+
                       <div className="flex-1 min-w-0">
                         <span className="font-medium text-white">{u.name}</span>
                         <div className="text-xs text-gray-400 mt-0.5">
                           {/* to show online offlin text */}
+                          {onlineUsers.includes(u._id) ? "Online" : "Offline"}
                         </div>
                       </div>
                     </div>
@@ -155,7 +169,11 @@ const ChatSidebar = ({
                       <div className="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center  ">
                         <UserCircle className="w-7 h-7 text-gray-300" />
                         {/* online user work */}
+                        
                       </div>
+                      {onlineUsers.includes(chat.user._id) && (
+                        <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-green-500 border-2 border-gray-900"/>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0 ">
                       <div className="flex items-center mb-1">
