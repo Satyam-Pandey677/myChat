@@ -32,7 +32,7 @@ io.on("connection", (socket:Socket) => {
         socket.join(userId)
     }
 
-    socket.on("typing", (data) => {
+    socket.on("typing", (data:any) => {
         console.log(`User ${data.userId} is typing in chat ${data.chatId}`)
         socket.to(data.chatId).emit("userTyping",{
             chatId:data.chatId,
@@ -40,7 +40,7 @@ io.on("connection", (socket:Socket) => {
         })
     })
 
-    socket.on("stopTyping", (data) => {
+    socket.on("stopTyping", (data:any) => {
         console.log(`User ${data.userId} stopped typing in chat ${data.chatId}`)
         socket.to(data.chaId).emit("userStoppedTyping",{
             chatId:data.chatId,
@@ -48,7 +48,7 @@ io.on("connection", (socket:Socket) => {
         })
     })
 
-    socket.on("jsoinChat",(chatId) =>{
+    socket.on("joinChat",(chatId) =>{
         socket.join(chatId)
         console.log(`User ${userId} joined chat room ${chatId}`);
     });

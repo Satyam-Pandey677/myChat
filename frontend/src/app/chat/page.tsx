@@ -31,7 +31,7 @@ export interface Message {
 const ChatApp = () => {
   const {loading, isAuth, logoutUser,chats, user:loggedInUser, users, fetchChats, setChats } = useAppData();
 
-  const {onlineUsers} = SocketData();
+  const {onlineUsers, socket} = SocketData();
 
   console.log(onlineUsers)
 
@@ -100,6 +100,16 @@ const ChatApp = () => {
 
       // socket work 
 
+      if(typingTimeOut){
+        clearTimeout(typingTimeOut)
+        setTypingTimeOut(null)
+      }
+
+      socket?.emit("stopTyping",{
+        chatId:selectedUser,
+        userId:loggedInUser?._id
+      })
+
       const token = Cookies.get("token");
 
       try {
@@ -147,17 +157,62 @@ const ChatApp = () => {
   const handleTyping = (value:string) => {
     setMessage(value)
 
-    if(!selectedUser) return;
+    if(!selectedUser || !socket) return;
 
     // socket setup
 
+    if(value.trim()){
+      socket.emit("typing",{
+         chatId:selectedUser,
+         userId:loggedInUser?._id
+      });
+    }
 
-
+    if(typingTimeOut){
+      clearTimeout(typingTimeOut)
+    }
+    
+    const timeout = setTimeout(() => {
+      socket.emit("stopTyping",{
+         chatId:selectedUser,
+         userId:loggedInUser?._id
+      });
+    },2000)
+    
+    setTypingTimeOut(timeout)
   }
+
+  useEffect(() => {
+    socket.on("userTyping",(data:any) =>{
+      console.log("received user typing",data);
+      if(data.chatId === selectedUser && data.userId !== loggedInUser?._id){
+        setIsTyping(true)
+      }
+    })
+    socket.on("userStoppedTyping",(data:any) =>{
+      console.log("received user typing",data);
+      if(data.chatId === selectedUser && data.userId !== loggedInUser?._id){
+        setIsTyping(false)
+      }
+    });
+
+    return () =>{
+      socket?.off("userTyping")
+      socket?.off("userStoppedTyping")
+    }
+  },[socket, selectedUser, loggedInUser?._id])
 
   useEffect(() => {
     if(selectedUser){
       fetchChat();
+      setIsTyping(false)
+
+      socket?.emit("joinChat", selectedUser);
+
+      return () =>{
+        socket?.emit("leaveChat", selectedUser);
+        setMessage(null)
+      }
     }
   },[selectedUser]);
  
