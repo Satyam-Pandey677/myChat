@@ -33,8 +33,6 @@ const ChatApp = () => {
 
   const {onlineUsers, socket} = SocketData();
 
-  console.log(onlineUsers)
-
   const [selectedUser, setSelectedUser] = useState<string |null>(null);
   const [message, setMessage] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -200,6 +198,16 @@ const ChatApp = () => {
 
           const displayText = imageFile ? "📷 image" : message
 
+          moveChatToTop(
+            selectedUser!, 
+            {
+              text:displayText,
+              sender: data.sender,
+
+            },
+            false
+          )
+
       } catch (error:any) {
           toast.error(error)
       }
@@ -252,6 +260,9 @@ const ChatApp = () => {
         });
 
         moveChatToTop(message.chatId, message, false);
+      }else{
+        moveChatToTop(message.chatId, message, true);
+
       }
     })
 
