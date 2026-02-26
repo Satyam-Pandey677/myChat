@@ -16,6 +16,10 @@ const io = new Server(server, {
 
 const userSocketMap: Record<string,string> = {};
 
+export const getReceiverSocketId = (receiverId:string):string | undefined =>{
+    return userSocketMap[receiverId];
+}
+
 io.on("connection", (socket:Socket) => {
     console.log("user Connected", socket.id);
 
@@ -42,7 +46,7 @@ io.on("connection", (socket:Socket) => {
 
     socket.on("stopTyping", (data:any) => {
         console.log(`User ${data.userId} stopped typing in chat ${data.chatId}`)
-        socket.to(data.chaId).emit("userStoppedTyping",{
+        socket.to(data.chaId).emit("",{
             chatId:data.chatId,
             userId:data.userId  
         })
@@ -56,7 +60,6 @@ io.on("connection", (socket:Socket) => {
     socket.on("leaveChat", (chatId) => {
         socket.leave(chatId)
         console.log(`User ${userId} left chat room ${chatId}`);
-
     })
     
 
