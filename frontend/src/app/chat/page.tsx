@@ -183,14 +183,15 @@ const ChatApp = () => {
   }
 
   useEffect(() => {
-    socket.on("userTyping",(data:any) =>{
+    socket?.on ("userTyping",(data:any) =>{
       console.log("received user typing",data);
       if(data.chatId === selectedUser && data.userId !== loggedInUser?._id){
         setIsTyping(true)
       }
     })
-    socket.on("userStoppedTyping",(data:any) =>{
-      console.log("received user typing",data);
+
+    socket?.on("userStoppedTyping",(data:any) =>{
+      console.log("received user stopped typing",data);
       if(data.chatId === selectedUser && data.userId !== loggedInUser?._id){
         setIsTyping(false)
       }
@@ -211,10 +212,18 @@ const ChatApp = () => {
 
       return () =>{
         socket?.emit("leaveChat", selectedUser);
-        setMessage(null)
+        setMessage("")
       }
     }
-  },[selectedUser]);
+  },[selectedUser,socket]);
+
+
+  useEffect(() => {
+    if(typingTimeOut){
+      clearTimeout(typingTimeOut);
+    }
+  },[])
+
  
 
   if(loading) return <Loading/>

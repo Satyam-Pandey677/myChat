@@ -3,6 +3,7 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client"
 import { CHAT_SERVICE, useAppData } from "./AppContext";
+import { CornerDownLeft } from "lucide-react";
 
 
 interface SocketContextType{
@@ -10,10 +11,7 @@ interface SocketContextType{
     onlineUsers: string[]
 }
 
-const SocketContext= createContext<SocketContextType|null>({
-    socket:null,
-    onlineUsers:[] 
-});
+const SocketContext= createContext<SocketContextType|null>(null);
 
 interface ProviderProps{
     children:ReactNode
@@ -53,4 +51,11 @@ export const SocketProvider = ({children}:ProviderProps)=>{
     )
 }
 
-export const SocketData = () => useContext(SocketContext);  
+export const SocketData = ():SocketContextType => {
+    const context = useContext(SocketContext);
+    if(!context){
+        throw new Error("SocketData must be used within SocketProvider")
+    }  
+    return context;
+}
+    
